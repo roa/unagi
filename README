@@ -1,0 +1,74 @@
+Please refer to INSTALL file concerning installation instructions.
+
+At the  moment, only Awesome  Window Manager has been  heavily tested,
+but it should work properly with any Window Manager following EWMH and
+ICCCM specifications.
+
+Once you have  built the program, you can run it  by simply typing the
+following command:
+
+$ unagi
+
+It  will look  for a  configuration file  in `$sysconfigdir/xdg/'  (by
+default `/usr/local/etc/xdg/'), then fallback on XDG Base Directories,
+namely   `$HOME/.config/'  then   `/etc/xdg/',  if   `XDG_CONFIG_DIRS'
+environment  variable  is  not  defined (as  specified  in  `XDG  Base
+Directory Specification').   You can also specified  the configuration
+file by passing `-c' option.
+
+You may  find the program  documentation in doc/ directory  in various
+format (HTML, LaTeX and man pages).
+
+You  can  also  run  it  without installing  anything  by  typing  the
+following command from the source directory:
+
+$ ./src/unagi  -r rendering/.libs/ -p plugins/.libs/ -c unagi.conf
+
+Awesome configuration for windows opacity
+=========================================
+
+The following  sets opacity to 0.8  for URxvt (you can  use `xprop' to
+find out what is the class (WM_CLASS property)):
+
+awful.rules.rules = {
+    ...
+    { rule = { class = "URxvt" },
+      properties = { opacity = 0.8 } },
+}
+
+Opacity depending on windows focus
+----------------------------------
+
+The following sets opacity for Emacs  and Rxvt to 0.9 when focused and
+0.7  otherwise (you  can use  `xprop' to  find out  what is  the class
+(WM_CLASS property)):
+
+client.add_signal(
+   "focus",
+   function(c)
+      if c.class:lower():find("rxvt") or c.class:lower():find("emacs") then
+         c.border_color = beautiful.border_focus
+         c.opacity = 0.9
+      end
+   end)
+
+client.add_signal(
+   "unfocus",
+   function(c)
+      if c.class:lower():find("rxvt") or c.class:lower():find("emacs") then
+         c.border_color = beautiful.border_normal
+         c.opacity = 0.7
+      end
+   end)
+
+Xephyr
+======
+
+You may want to use Xephyr (nested X server) for debugging:
+
+$ Xephyr -screen 1024x768 -ac -br :1
+
+Then  run  the  command  given  in  the  previous  section  by  adding
+DISPLAY=:1 at the beginning. You  may want to run other X applications
+(such  as Awesome  window manager)  by setting  DISPLAY=:1 environment
+variable before.
